@@ -75,6 +75,11 @@ class ReadIngredientAmountSerializer(serializers.ModelSerializer):
 
 
 class ReadTagSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для тегов (модель Tag)
+    Только для чтения.
+    """
+
     class Meta:
         model = Tag
         fields = ('id',
@@ -117,3 +122,15 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         if user.is_anonymous:
             return False
         return user.shopping_cart.filter(recipe=obj).exists()
+
+
+class IngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор для ингредиентов (модель Ingredient)
+    Только для чтения.
+    """
+
+    class Meta:
+        model = Ingredient
+        fields = ('id',
+                  'name',
+                  'measurement_unit',)

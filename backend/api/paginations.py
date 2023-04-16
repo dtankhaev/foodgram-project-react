@@ -5,8 +5,8 @@ class CustomPagination(PageNumberPagination):
     """
     Кастомный пагинатор для выдачи рецептов.
     Добавлен параметр 'limit' (какое число объектов вернётся).
-    Также установлена выдача по 5 записей.
+    Также установлена выдача по 6 записей.
     """
 
-    page_size = 5
+    page_size = 6
     page_size_query_param = 'limit'

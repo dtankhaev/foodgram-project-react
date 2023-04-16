@@ -13,11 +13,23 @@ User = get_user_model()
 
 
 class CustomUserViewSet(UserViewSet):
+    """
+    Кастомный вьюсет пользователей (User)
+    Добавлен дополнительный роут для отображения подписок пользователя
+    и роут для подписки/отписки на пользователей,
+    с применением кастомной пагинации CustomPagination.
+    """
+
     pagination_class = CustomPagination
 
     @action(detail=False)
     def subscriptions(self, request):
-        queryset = Subscribe.objects.filter(user=request.user)
+        """
+        Отображение подписок текущего пользователя
+        api/users/subscriptions/.
+        """
+
+        queryset = request.user.subscribers.all()
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(pages,
                                          many=True,
@@ -27,6 +39,11 @@ class CustomUserViewSet(UserViewSet):
     @action(detail=True,
             methods=('POST', 'DELETE'))
     def subscribe(self, request, id=None):
+        """
+        Подписка/Отписка на пользователей.
+        api/users/subscribe/.
+        """
+
         author = get_object_or_404(User, id=id)
         if self.request.method == 'POST':
             if self.request.user == author:

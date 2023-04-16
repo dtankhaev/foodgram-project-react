@@ -6,7 +6,7 @@ from rest_framework import serializers
 from .models import Subscribe
 
 
-class ForSubscribeRecipeSerializer(serializers.ModelSerializer):
+class LittleRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
 
     class Meta:
@@ -67,10 +67,10 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def get_recipes(self, obj):
         request = self.context.get('request')
         count_recipes = request.GET.get('recipes_limit')
-        queryset = Recipe.objects.filter(author=obj.author)
+        queryset = obj.author.recipes.all()
         if count_recipes:
             queryset = queryset[:int(count_recipes)]
-        return ForSubscribeRecipeSerializer(queryset, many=True).data
+        return LittleRecipeSerializer(queryset, many=True).data
 
     def get_recipes_count(self, obj):
         return obj.author.recipes.all().count()
