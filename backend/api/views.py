@@ -1,5 +1,5 @@
-# from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -7,18 +7,53 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.serializers import LittleRecipeSerializer
 
+from .filters import ForRecipeFilter
 from .paginations import CustomPagination
 from .permissions import AuthorOrReadOnly
 from .serializers import (IngredientSerializer, ReadRecipeSerializer,
                           ReadTagSerializer, WriteRecipeSerializer)
 
 
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Вьюсет для отображения ингредиентов (модель Ingredient).
+    Доступен всем только для чтения.
+    Подключен встроенный фильтрующий поисковой бэкенд по полю 'name'.
+    api/ingredients/?search=л (выдаст все ингредиенты начинающиеся на 'л').
+    """
+
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Вьюсет для отображения тегов (модель Tag).
+    Доступен всем только для чтения.
+    api/tags/.
+    """
+
+    queryset = Tag.objects.all()
+    serializer_class = ReadTagSerializer
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
     """
     Вьюсет рецептов, применяющий 2 сериализатора:
-    ReadRecipeSerializer/WriteRecipeSerializer (чтение/запись)
+    ReadRecipeSerializer/WriteRecipeSerializer (чтение/запись),
+     - /api/recipes/ ('GET', 'POST', 'PATCH', 'DELETE')
     с применением кастомного пермишена AuthorOrReadOnly,
-    кастомного пагинатора CustomPagination.
+    и кастомного пагинатора CustomPagination.
+
+    Подключен внешний бэкенд DjangoFilterBackend,
+    с применением кастомного фильтра ForRecipeFilter
+    по полям 'tags', 'author', 'is_favorited', 'is_in_shopping_cart'.
+     - /api/recipes/?is_favorited=1 (отображение избранных рецептов)
+     - /api/recipes/?is_in_shopping_cart=1 (отображение корзины покупателя)
+     - /api/recipes/?author=1 (отображение рецептов определенного пользователя)
+     - /api/recipes/?tags=breakfast (отображение рецептов с выбранным тегом)
 
     Добавлено три дополнительных роута (@action):
      - /api/recipes/{id}/favorite/ ('POST', 'DELETE')
@@ -28,10 +63,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
      - /api/recipes/download_shopping_cart/ ('GET')
         (скачивание списка покупок).
     """
+
     queryset = Recipe.objects.all()
     permission_classes = (AuthorOrReadOnly,)
-    # filter_backends = (DjangoFilterBackend,)  # TODO создать фильтры
+    filter_backends = (DjangoFilterBackend,)
     pagination_class = CustomPagination
+    filterset_class = ForRecipeFilter
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -47,6 +84,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
     def favorite(self, request, pk=None):
         """Добавление рецепта в избранное."""
+
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
             return self.add_my_obj(Favorite, recipe, request.user)
@@ -57,7 +95,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,)
             )
     def shopping_cart(self, request, pk=None):
-        """Добавление рецепта в список покупок."""
+        """Добавление рецепта в корзину."""
+
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
             return self.add_my_obj(ShoppingCart, recipe, request.user)
@@ -93,28 +132,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_204_NO_CONTENT)
         return Response({'errors': f'рецепта нет в списке {model.__name__}'},
                         status=status.HTTP_400_BAD_REQUEST)
-
-
-class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    Вьюсет для отображения ингредиентов (модель Ingredient).
-    Доступен всем только для чтения.
-    Подключен встроенный фильтрующий поисковой бэкенд по полю 'name'.
-    api/ingredients/?search=л (выдаст все ингредиенты начинающиеся на 'л').
-    """
-
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
-
-
-class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    Вьюсет для отображения тегов (модель Tag).
-    Доступен всем только для чтения.
-    api/tags/.
-    """
-
-    queryset = Tag.objects.all()
-    serializer_class = ReadTagSerializer

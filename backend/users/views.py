@@ -41,7 +41,7 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, id=None):
         """
         Подписка/Отписка на пользователей.
-        api/users/subscribe/.
+        api/users/{id}/subscribe/.
         """
 
         author = get_object_or_404(User, id=id)
@@ -68,7 +68,7 @@ class CustomUserViewSet(UserViewSet):
                                              author=author)
         if subscribe.exists():
             subscribe.delete()
-            return Response({'succession': 'Отписка совершена'},
+            return Response({'successfully': 'Отписка совершена'},
                             status=status.HTTP_204_NO_CONTENT)
         return Response({'errors': 'Вы уже отписаны от данного пользователя'},
                         status=status.HTTP_400_BAD_REQUEST)
