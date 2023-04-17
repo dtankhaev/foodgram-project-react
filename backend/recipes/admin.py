@@ -8,7 +8,7 @@ from .models import (Favorite, Ingredient, IngredientAmount, Recipe,
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ['name', 'author', 'pub_date', 'count_favorites',
-                    'get_html_photo']
+                    'get_html_photo']  # TODO разобраться с картинками
     list_editable = ['author', ]
     search_fields = ['name', ]
     list_filter = ['author', 'name', 'tags', 'pub_date']

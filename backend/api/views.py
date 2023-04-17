@@ -1,6 +1,11 @@
+from datetime import datetime
+
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Tag)
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -105,7 +110,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def add_my_obj(self, model, recipe, user):
         """
         Метод, предназначенный для добавления рецепта,
-        в Избранное/Список покупок.
+        в избранное/список покупок.
         применяется только в методах favorite и shopping_cart.
         """
 
@@ -132,3 +137,33 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_204_NO_CONTENT)
         return Response({'errors': f'рецепта нет в списке {model.__name__}'},
                         status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=False,
+        permission_classes=[IsAuthenticated]
+    )
+    def download_shopping_cart(self, request):
+        if not request.user.shopping_cart.exists():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        ingredients = IngredientAmount.objects.filter(
+            recipe__shopping_cart__user=request.user).values(
+                                                'ingredient__name',
+                                                'ingredient__measurement_unit'
+                                        ).annotate(all_amount=Sum('amount'))
+        shopping_list = (f'Корзина: {request.user}\n\n'
+                         f'Дата: {datetime.today():%Y-%m-%d}\n\n'
+                         )
+        shopping_list += '\n'.join([
+                            f'- {ingredient["ingredient__name"]} '
+                            f'({ingredient["ingredient__measurement_unit"]})'
+                            f' - {ingredient["all_amount"]}'
+                            for ingredient in ingredients
+                            ])
+        shopping_list += f'\n\nFoodgram ({datetime.today():%Y-%m-%d})'
+
+        filename = 'shopping_list.txt'
+        response = HttpResponse(shopping_list, content_type='text/plain')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+
+        return response

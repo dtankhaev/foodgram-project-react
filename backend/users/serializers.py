@@ -73,4 +73,4 @@ class SubscribeSerializer(serializers.ModelSerializer):
         return LittleRecipeSerializer(queryset, many=True).data
 
     def get_recipes_count(self, obj):
-        return obj.author.recipes.all().count()
+        return obj.author.recipes.count()

@@ -45,7 +45,7 @@ class CustomUserViewSet(UserViewSet):
         """
 
         author = get_object_or_404(User, id=id)
-        if self.request.method == 'POST':
+        if self.request.method == 'POST':  # TODO подумать как упростить.
             if self.request.user == author:
                 return Response(
                     {'errors': 'Вы не можете подписаться на себя'},

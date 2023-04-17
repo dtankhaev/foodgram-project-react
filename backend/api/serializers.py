@@ -14,6 +14,13 @@ class WriteIngredientAmountSerializer(serializers.ModelSerializer):
 
 
 class WriteRecipeSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для создания рецептов!(модель Recipe),
+    с вложенным сериализатором WriteIngredientAmountSerializer
+
+    Применен Base64ImageField для картинок.
+    """
+
     ingredients = WriteIngredientAmountSerializer(many=True)
     tags = serializers.SlugRelatedField(queryset=Tag.objects.all(),
                                         slug_field='id',
@@ -25,6 +32,10 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         exclude = ('author',)
 
     def for_create_ingredients(self, recipe, ingredients):
+        """Данный метод предназачен для создания объекта IngredientAmount.
+        применяется только в методах create, update
+        """
+
         for ingredient in ingredients:
             IngredientAmount.objects.create(
                 recipe=recipe,
@@ -59,6 +70,12 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
 
 
 class ReadIngredientAmountSerializer(serializers.ModelSerializer):
+    """Сериализатор для чтения модели IngredientAmount.
+    Извлекаются дополнительные поля id, name, measurement_unit ингредиента.
+
+    Данный сериализатор применяется только в ReadRecipeSerializer.
+    """
+
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -89,6 +106,19 @@ class ReadTagSerializer(serializers.ModelSerializer):
 
 
 class ReadRecipeSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для чтения рецептов! модель Recipe.
+    с 2 вложенными сериализаторами:
+     - CustomUserSerializer (выдача пользователя)
+     - ReadIngredientAmountSerializer (выдача ингредиента с кол-ом)
+
+    Применен Base64ImageField для картинок.
+
+    Также создано 2 новых поля:
+     - is_favorited (в избранном ли рецепт?)
+     - is_in_shopping_cart (в корзине ли рецепт?).
+    """
+
     author = CustomUserSerializer()
     ingredients = ReadIngredientAmountSerializer(many=True,
                                                  source='recipe_ingredient',)
