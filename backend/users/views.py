@@ -1,4 +1,3 @@
-from api.paginations import CustomPagination
 from django.contrib.auth import get_user_model
 from djoser.views import UserViewSet
 from rest_framework import status
@@ -6,6 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
+from api.paginations import CustomPagination
 from .models import Subscribe
 from .serializers import SubscribeSerializer
 
@@ -26,6 +26,7 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         """
         Отображение подписок текущего пользователя
+        (GET)
         api/users/subscriptions/.
         """
 
@@ -41,6 +42,7 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, id=None):
         """
         Подписка/Отписка на пользователей.
+        (GET, DELETE)
         api/users/{id}/subscribe/.
         """
 

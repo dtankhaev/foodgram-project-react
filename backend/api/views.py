@@ -4,19 +4,19 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                            ShoppingCart, Tag)
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from users.serializers import LittleRecipeSerializer
 
 from .filters import ForRecipeFilter
 from .paginations import CustomPagination
 from .permissions import AuthorOrReadOnly
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Tag)
 from .serializers import (IngredientSerializer, ReadRecipeSerializer,
                           ReadTagSerializer, WriteRecipeSerializer)
+from users.serializers import LittleRecipeSerializer
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -92,8 +92,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
-            return self.add_my_obj(Favorite, recipe, request.user)
-        return self.delete_my_obj(Favorite, recipe, request.user)
+            return self.add_obj(Favorite, recipe, request.user)
+        return self.delete_obj(Favorite, recipe, request.user)
 
     @action(detail=True,
             methods=('POST', 'DELETE'),
@@ -104,10 +104,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
-            return self.add_my_obj(ShoppingCart, recipe, request.user)
-        return self.delete_my_obj(ShoppingCart, recipe, request.user)
+            return self.add_obj(ShoppingCart, recipe, request.user)
+        return self.delete_obj(ShoppingCart, recipe, request.user)
 
-    def add_my_obj(self, model, recipe, user):
+    def add_obj(self, model, recipe, user):
         """
         Метод, предназначенный для добавления рецепта,
         в избранное/список покупок.
@@ -122,7 +122,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = LittleRecipeSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete_my_obj(self, model, recipe, user):
+    def delete_obj(self, model, recipe, user):
         """
         Метод, предназначенный для удаления рецепта,
         из избранного/списка покупок.

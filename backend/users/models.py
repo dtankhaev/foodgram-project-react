@@ -8,19 +8,22 @@ User = get_user_model
 class User(AbstractUser):
     """Кастомная модель User."""
 
-    email = models.EmailField(verbose_name='Email',
-                              help_text='Введите свою почту',
-                              max_length=254,
-                              unique=True,
-                              )
-    first_name = models.CharField(verbose_name='Имя',
-                                  help_text='Введите свое имя',
-                                  max_length=150,
-                                  )
-    last_name = models.CharField(verbose_name='Фамилия',
-                                 help_text='Введите свою фамилию',
-                                 max_length=150,
-                                 )
+    email = models.EmailField(
+        verbose_name='Email',
+        help_text='Введите свою почту',
+        max_length=254,
+        unique=True,
+    )
+    first_name = models.CharField(
+        verbose_name='Имя',
+        help_text='Введите свое имя',
+        max_length=150,
+    )
+    last_name = models.CharField(
+        verbose_name='Фамилия',
+        help_text='Введите свою фамилию',
+        max_length=150,
+    )
 
     USERNAME_FIELD = 'email'
 
@@ -40,13 +43,14 @@ class User(AbstractUser):
 
 
 class Subscribe(models.Model):
-    user = models.ForeignKey(User,
-                             on_delete=models.CASCADE,
-                             related_name='subscribers',
-                             )
-    author = models.ForeignKey(User,
-                               on_delete=models.CASCADE,
-                               related_name='subscribing')
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscribers',
+    )
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='subscribing'
+    )
 
     class Meta:
         constraints = [
@@ -55,7 +59,7 @@ class Subscribe(models.Model):
                 name='unique_subscribe',
             )
         ]
-        ordering = ['id']
+        ordering = ['-author_id']
         verbose_name = 'подписка'
         verbose_name_plural = 'подписки'
 

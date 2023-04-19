@@ -1,6 +1,7 @@
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import Ingredient, IngredientAmount, Recipe, Tag
 from rest_framework import serializers
+
+from recipes.models import Ingredient, IngredientAmount, Recipe, Tag
 from users.serializers import CustomUserSerializer
 
 
@@ -31,24 +32,25 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         exclude = ('author',)
 
-    def for_create_ingredients(self, recipe, ingredients):
+    def create_ingredients(self, recipe, ingredients):
         """Данный метод предназачен для создания объекта IngredientAmount.
         применяется только в методах create, update
         """
 
-        for ingredient in ingredients:
-            IngredientAmount.objects.create(
+        IngredientAmount.objects.bulk_create(
+            [IngredientAmount(
                 recipe=recipe,
                 ingredient=ingredient.get('id'),
                 amount=ingredient.get('amount')
-            )
+            ) for ingredient in ingredients]
+        )
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
-        self.for_create_ingredients(recipe, ingredients)
+        self.create_ingredients(recipe, ingredients)
         return recipe
 
     def update(self, instance, validated_data):
@@ -58,7 +60,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         instance.tags.clear()
         instance.tags.set(tags)
         instance.ingredients.clear()
-        self.for_create_ingredients(instance, ingredients)
+        self.create_ingredients(instance, ingredients)
         instance.save
         return instance
 
@@ -81,7 +83,6 @@ class ReadIngredientAmountSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.ReadOnlyField(
                                     source='ingredient.measurement_unit'
                                     )
-    amount = serializers.IntegerField()
 
     class Meta:
         model = IngredientAmount

@@ -5,6 +5,11 @@ from .models import (Favorite, Ingredient, IngredientAmount, Recipe,
                      ShoppingCart, Tag)
 
 
+class IngredientAmountInline(admin.StackedInline):
+    model = IngredientAmount
+    min_num = 1
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ['name', 'author', 'pub_date', 'count_favorites',
@@ -13,6 +18,7 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ['name', ]
     list_filter = ['author', 'name', 'tags', 'pub_date']
     list_per_page = 6
+    inlines = (IngredientAmountInline,)
 
     def count_favorites(self, obj):
         return obj.favorites.count()
