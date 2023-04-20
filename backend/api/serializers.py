@@ -68,7 +68,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         return ReadRecipeSerializer(
                     instance,
                     context={'request': self.context.get('request')}
-                    ).data
+                                    ).data
 
 
 class ReadIngredientAmountSerializer(serializers.ModelSerializer):
