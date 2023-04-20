@@ -1,5 +1,7 @@
+from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from recipes.models import Ingredient, IngredientAmount, Recipe, Tag
 from users.serializers import CustomUserSerializer
@@ -64,20 +66,20 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         instance.save
         return instance
 
-    # def validate_ingredients(self, ingredients):
-    #     if not ingredients:
-    #         raise ValidationError({'Нужен хотя бы один ингредиент!'})
-    #     ingredients_list = []
-    #     for obj in ingredients:
-    #         ingredient = get_object_or_404(Ingredient, id=obj['id'])
-    #         if ingredient in ingredients_list:
-    #             raise ValidationError({'Ингредиенты не должны повторяться!'})
-    #         if int(obj['amount']) <= 0:
-    #             raise ValidationError(
-    #                 {'Количество ингредиента должно быть больше 0!'}
-    #                                  )
-    #         ingredients_list.append(ingredient)
-    #     return ingredients
+    def validate_ingredients(self, value):
+        if not value:
+            raise ValidationError({'Нужен хотя бы один ингредиент!'})
+        ingredients_list = []
+        for obj in value:
+            ingredient = get_object_or_404(Ingredient, id=obj['id'])
+            if ingredient in ingredients_list:
+                raise ValidationError({'Ингредиенты не должны повторяться!'})
+            if int(obj['amount']) <= 0:
+                raise ValidationError(
+                    {'Количество ингредиента должно быть больше 0!'}
+                                     )
+            ingredients_list.append(ingredient)
+        return value
 
     def to_representation(self, instance):
         return ReadRecipeSerializer(
