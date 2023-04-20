@@ -3,4 +3,4 @@
 51.250.20.19
 
 email: root@gmail.com
-password: qwerty
+password: mynameisroot
