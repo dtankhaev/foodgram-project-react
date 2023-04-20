@@ -66,20 +66,20 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         instance.save
         return instance
 
-    def validate_ingredients(self, ingredients):
-        if not ingredients:
-            raise ValidationError({'Нужен хотя бы один ингредиент!'})
-        ingredients_list = []
-        for obj in ingredients:
-            ingredient = get_object_or_404(Ingredient, id=obj['id'])
-            if ingredient in ingredients_list:
-                raise ValidationError({'Ингредиенты не должны повторяться!'})
-            if int(obj['amount']) <= 0:
-                raise ValidationError(
-                    {'Количество ингредиента должно быть больше 0!'}
-                                     )
-            ingredients_list.append(ingredient)
-        return ingredients
+    # def validate_ingredients(self, ingredients):
+    #     if not ingredients:
+    #         raise ValidationError({'Нужен хотя бы один ингредиент!'})
+    #     ingredients_list = []
+    #     for obj in ingredients:
+    #         ingredient = get_object_or_404(Ingredient, id=obj['id'])
+    #         if ingredient in ingredients_list:
+    #             raise ValidationError({'Ингредиенты не должны повторяться!'})
+    #         if int(obj['amount']) <= 0:
+    #             raise ValidationError(
+    #                 {'Количество ингредиента должно быть больше 0!'}
+    #                                  )
+    #         ingredients_list.append(ingredient)
+    #     return ingredients
 
     def to_representation(self, instance):
         return ReadRecipeSerializer(
