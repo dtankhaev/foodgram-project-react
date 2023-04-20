@@ -1,4 +1,4 @@
-name: Django-app workflow
+name: CI CD for foodgram project
 
 on: [push]
 
@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Клонирование репозитория
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -47,7 +47,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./backend
-          # file: ./backend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/backend_foodgram_image:2023
 
@@ -76,7 +75,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-      - uses: actions/checkout@master
       - name: send message
         uses: appleboy/telegram-action@master
         with:
