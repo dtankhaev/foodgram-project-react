@@ -2,17 +2,12 @@
 
 ## Об авторе
 
-Танхаев Данзан Леонидович  
-Python-разработчик
+Tankhaev Danzan
+
+Python-developer
 
 E-mail: dtankhaev@gmail.com  
 Telegram: @dtankhaev
-
-51.250.20.19
-
-email: root@gmail.com
-
-password: mynameisroot
 
 ## Стек технологий
 
