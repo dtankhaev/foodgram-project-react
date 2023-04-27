@@ -1,15 +1,16 @@
-# Сайт "Продуктовый помощник"
+# Website "Grocery assistant"
 
-## Об авторе
+## About the author
 
 Tankhaev Danzan
 
-Python-developer
+Python developer
 
-E-mail: dtankhaev@gmail.com  
+Email: dtankhaev@gmail.com
+
 Telegram: @dtankhaev
 
-## Стек технологий
+## Technology stack
 
 [![Python](https://img.shields.io/badge/-Python-464646?style=flat&logo=Python&logoColor=ffffff&color=043A6B)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/-Django-464646?style=flat&logo=Django&logoColor=ffffff&color=043A6B)](https://www.djangoproject.com/)
@@ -24,267 +25,267 @@ Telegram: @dtankhaev
 [![GitHub%20Actions](https://img.shields.io/badge/-GitHub%20Actions-464646?style=flat&logo=GitHub%20actions&logoColor=ffffff&color=043A6B)](https://github.com/features/actions)
 [![Yandex.Cloud](https://img.shields.io/badge/-Yandex.Cloud-464646?style=flat&logo=Yandex.Cloud&logoColor=ffffff&color=043A6B)](https://cloud.yandex.ru/)
 
-## Описание
+## Description
 
-«Продуктовый помощник»
-Сайт является - базой кулинарных рецептов. Пользователи могут создавать свои рецепты, читать рецепты других пользователей, подписываться на интересных авторов, добавлять лучшие рецепты в избранное, а также создавать список покупок и загружать его в txt формате. Также присутствует файл docker-compose, позволяющий , быстро развернуть контейнер базы данных (PostgreSQL), контейнер проекта django + gunicorn и контейнер nginx
+"Grocery Assistant"
+The site is a database of culinary recipes. Users can create their own recipes, read recipes of other users, subscribe to interesting authors, add the best recipes to favorites, as well as create a shopping list and upload it in THT format. There is also a docker-compose file that allows you to quickly deploy a database container (PostgreSQL), a django + gunicorn project container and an nginx container.
 
-Документация к API доступна [здесь](http://51.250.20.19//api/docs/)
+API documentation is available to [here](http://51.250.20.19//api/docs /)
 
-## Подготовка и запуск проекта
+## Preparation and launch of the project
 
-### Склонировать репозиторий на локальную машину:
+### Clone the repository to the local machine:
 
 ```
 git clone git@github.com:dtankhaev/foodgram-project-react.git
-```
+``
 
-## Для работы с удаленным сервером (на ubuntu):
+## To work with a remote server (on ubuntu):
 
-- Выполните вход на свой удаленный сервер
+- Log in to your remote server
 
-- Установите docker на сервер:
+- Install docker on the server:
 
-```
-sudo apt install docker.io
-```
+``
+installing sudo apt docker.io
+``
 
-- Установите docker-compose на сервер:
+- Install docker-create on the server:
 
-```
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+``
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose -$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
-- Локально отредактируйте файл infra/nginx.conf и в строке server_name впишите свой IP
-- Скопируйте файлы docker-compose.yml и nginx.conf из директории infra на сервер:
+- Locally edit the infra/nginx.conf file and enter your IP in the server_name line
+- Copy the docker-compose files.yml and nginx.conf from the infra directory to the server:
 
 ```
 scp docker-compose.yml <username>@<host>:/home/<username>/docker-compose.yml
 scp nginx.conf <username>@<host>:/home/<username>/nginx.conf
 ```
 
-- Cоздайте .env файл и впишите:
-  ```
-  DB_ENGINE=<django.db.backends.postgresql>
-  DB_NAME=<имя базы данных postgres>
-  DB_USER=<пользователь бд>
-  DB_PASSWORD=<пароль>
-  DB_HOST=<db>
-  DB_PORT=<5432>
-  SECRET_KEY=<секретный ключ проекта django>
-  ```
-- Для работы с Workflow добавьте в Secrets GitHub переменные окружения для работы:
+- create .env file and enter:
+```
+DB_ENGINE=<django.db.backends.postgresql>
+DB_NAME=<postgres database name>
+DB_USER=<db user>
+DB_PASSWORD=<password>
+DB_HOST=<db>
+DB_PORT=<5432>
+SECRET_KEY=<django project secret key>
+```
+- To work with Workflow, add environment variables to GitHub Secrets for work:
 
-  ```
-  DOCKER_PASSWORD=<пароль от DockerHub>
-  DOCKER_USERNAME=<имя пользователя>
+```
+DOCKER_PASSWORD=<DockerHub password>
+DOCKER_USERNAME=<username>
 
-  SECRET_KEY=<секретный ключ проекта django>
+SECRET_KEY=<django project secret key>
 
-  USER=<username для подключения к серверу>
-  HOST=<IP сервера>
-  PASSPHRASE=<пароль для сервера, если он установлен>
-  SSH_KEY=<ваш SSH ключ (для получения команда: cat ~/.ssh/id_rsa)>
+USER=<username to connect to the server>
+HOST=<Server IP>
+PASSPHRASE=<password for the server, if installed>
+SSH_KEY=<your SSH key (to get the command: cat ~/.ssh/id_rsa)>
 
-  TELEGRAM_TO=<ID чата, в который придет сообщение>
-  TELEGRAM_TOKEN=<токен вашего бота>
-  ```
+TELEGRAM_TO=<ID of the chat to which the message will be sent>
+TELEGRAM_TOKEN=<your bot's token>
+```
 
-  Workflow состоит из трёх шагов:
+It consists of a three-step workflow:
 
-  - Проверка кода на соответствие PEP8
-  - Сборка и публикация образа бекенда на DockerHub.
-  - Автоматический деплой на удаленный сервер с применением миграций и сборки статики
-  - Отправка уведомления в телеграм-чат.
+- Checking the code for compliance with PEP8
+- Assembling and publishing the backend image on DockerHub.
+- Automatic deployment to a remote server using migrations and static assembly
+- Sending notifications to the telegram chat.
 
-- На сервере соберите docker-compose:
+- Build docker on the server-create:
 
 ```
 sudo docker-compose up -d --build
 ```
 
-- После успешной сборки на сервере выполните команды (только после первого деплоя):
-  - Создать суперпользователя Django:
-  ```
-  sudo docker-compose exec backend python manage.py createsuperuser
-  ```
-  - Проект будет доступен по вашему IP
+- After a successful build on the server, run the commands (only after the first deployment):
+- Create a Django superuser:
+``
+sudo docker -creates an exec server part for python management.py creates a superuser
+``
+- The project will be available via your IP
 
-## Регистрация и авторизация
+## Registration and authorization
 
-В сервисе предусмотрена система регистрации и авторизации пользователей.
-Обязательные поля для пользователя:
+The service provides a system of registration and authorization of users.
+Required fields for the user:
 
-<li> Логин
-<li> Пароль
+<li> Login
+<li> Password
 <li> Email
-<li> Имя
-<li> Фамилия
+<li> Name
+<li> Surname
 
-## Права доступа к ресурсам сервиса
+## Access rights to the service resources
 
-### неавторизованные пользователи могут:
+### unauthorized users can:
 
-    - создать аккаунт;
-    - просматривать рецепты на главной;
-    - просматривать отдельные страницы рецептов;
-    - фильтровать рецепты по тегам;
+- create an account;
+- view recipes on the home page;
+- view individual recipe pages;
+- filter recipes by tags;
 
-### авторизованные пользователи могут:
+### authorized users can:
 
-    - входить в систему под своим логином и паролем;
-    - выходить из системы (разлогиниваться);
-    - менять свой пароль;
-    - создавать/редактировать/удалять собственные рецепты;
-    - просматривать рецепты на главной;
-    - просматривать страницы пользователей;
-    - просматривать отдельные страницы рецептов;
-    - фильтровать рецепты по тегам;
-    - работать с персональным списком избранного: добавлять в него рецепты или удалять их, просматривать свою страницу избранных рецептов;
-    - работать с персональным списком покупок: добавлять/удалять любые рецепты, выгружать файл со количеством необходимых ингридиентов для рецептов из списка покупок;
-    - подписываться на публикации авторов рецептов и отменять подписку, просматривать свою страницу подписок;
+- log in with your username and password;
+- log out (log out);
+- change your password;
+- create/edit/delete your own recipes;
+- view recipes on the home page;
+- view user pages;
+- view individual recipe pages;
+- filter recipes by tags;
+- work with a personal favorites list: add recipes to it or delete them, view your favorite recipes page;
+- work with a personal shopping list: add/remove any recipes, upload a file with the number of necessary ingredients for recipes from the shopping list;
+- subscribe to recipe authors' publications and cancel subscriptions, view your subscriptions page;
 
-### администратор
+### administrator
 
-Администратор обладает всеми правами авторизованного пользователя.
-<br> Плюс к этому он может:
+The administrator has all the rights of an authorized user.
+<br> Plus it can:
 
-    - изменять пароль любого пользователя;
-    - создавать/блокировать/удалять аккаунты пользователей;
-    - редактировать/удалять любые рецепты;
-    - добавлять/удалять/редактировать ингредиенты;
-    - добавлять/удалять/редактировать теги.
+- change the password of any user;
+- create/block/delete user accounts;
+- edit/delete any recipes;
+- add/remove/edit ingredients;
+- add/remove/edit tags.
 
-# Админка
+# Admin panel
 
-В интерфейс админ-зоны выведены следующие поля моделей и фильтры:
+The following model fields and filters are displayed in the admin zone interface:
 
-### Модели:
+### Models:
 
-    Доступны все модели с возможностью редактирования и удаления записей.
+All models are available with the ability to edit and delete records.
 
-### Модель пользователей:
+### User Model:
 
-    Фильтр по email и имени пользователя.
+Filter by username and email.
 
-### Модель рецептов:
+### Recipe Model:
 
-    В списке рецептов доступны название и авторы рецептов.
-    Фильтры по автору, названию рецепта, тегам.
-    Выведена информация о популярности рецепта: общее число добавлений этого рецепта в избранное пользователей.
+The name and authors of the recipes are available in the recipe list.
+Filters by author, recipe name, tags.
+Information about the popularity of the recipe is displayed: the total number of additions of this recipe to the favorites of users.
 
-### Модель ингредиентов:
+### Ingredients Model:
 
-    В списке ингредиентов доступны название ингредиента и единицы измерения.
-    Фильтр по названию.
+The ingredient name and units of measurement are available in the list of ingredients.
+Filter by name.
 
-# Ресурсы сервиса
+# Service Resources
 
-### Рецепт
+### Recipe
 
-Рецепт описывается полями:
+The recipe is described by the fields:
 
-    Автор публикации (пользователь).
-    Название рецепта.
-    Картинка рецепта.
-    Текстовое описание.
-    Ингредиенты: продукты для приготовления блюда по рецепту с указанием количества и единиц измерения.
-    Тег.
-    Время приготовления в минутах.
+The author of the publication (user).
+The name of the recipe.
+Picture of the recipe.
+Text description.
+Ingredients: products for cooking according to a recipe with an indication of the quantity and units of measurement.
+Tag.
+Cooking time in minutes.
 
-### Тег
+### Tag
 
-Тег описывается полями:
+The tag is described by fields:
 
-    Название.
-    Цветовой HEX-код.
-    Slug.
+Title.
+Color HEXADECIMAL code.
+Slug.
 
-### Ингредиент
+### Ingredient
 
-Ингредиент описывается полями:
+The ingredient is described by the fields:
 
-    Название.
-    Количество (только для рецепта).
-    Единицы измерения.
+Title.
+Quantity (for prescription only).
+Units of measurement.
 
-### Список покупок.
+### Shopping list.
 
-Список покупок скачивается в текстовом формате: shopping-list.txt.
+The Shopping list is downloaded in text format: shopping-list.txt .
 
-## Фильтрация по тегам
+## Filtering by tags
 
-При нажатии на название тега выводится список рецептов, отмеченных этим тегом. Фильтрация может проводится по нескольким тегам в комбинации «или»: если выбраны несколько тегов — в результате должны быть показаны рецепты, которые отмечены хотя бы одним из этих тегов.
-При фильтрации на странице пользователя фильтруются только рецепты выбранного пользователя. Такой же принцип соблюдается при фильтрации списка избранного.
+Clicking on the tag name displays a list of recipes marked with this tag. Filtering can be carried out by several tags in a combination of "or": if several tags are selected, recipes that are marked with at least one of these tags should be shown as a result.
+When filtering on the user's page, only the recipes of the selected user are filtered. The same principle is observed when filtering the favorites list.
 
-# Примеры запросов к API.
+# Examples of API requests.
 
-Запросы к API начинаются с «/api/v1/»
+API requests start with "/api/v1/"
 
-1. регистрация пользователя
+1. user registration
 
-POST-запрос: /api/users/
+POST request: /api/users/
 <br /> _Request sample:_
 
-```python
+`python
 {
-    "email": "string",
-    "username": "string",
-    "first_name": "string",
-    "last_name": "string",
-    "password": "string"
+"email": "string",
+"username": "string",
+"first_name": "string",
+"last_name": "string",
+"password": "string"
+}
+``
+
+_ Sample response (201):_
+
+`python
+{
+"email": "string",
+"id": 0,
+"username": "string",
+"first_name": "string",
+"last_name": "string"
+}
+``
+
+_ Sample response (400):_
+
+`python
+{
+"field_name": [
+"Required field."
+]
 }
 ```
 
-_Response sample (201):_
+2. Getting a token
 
-```python
+POST request: /api/auth/token/login/
+<br/> _Request sample:_
+
+`python
 {
-    "email": "string",
-    "id": 0,
-    "username": "string",
-    "first_name": "string",
-    "last_name": "string"
+"email": "string",
+"password": "string"
 }
-```
+``
 
-_Response sample (400):_
+_ Sample response (201):_
 
-```python
+`python
 {
-    «field_name»: [
-      «Обязательное поле.»
-    ]
+"token": "string"
 }
-```
+``
 
-2. Получение токена
+_ Sample response (400):_
 
-POST-запрос: /api/auth/token/login/
-<br /> _Request sample:_
-
-```python
+`python
 {
-    «email»: «string»,
-    «password»: «string»
-}
-```
-
-_Response sample (201):_
-
-```python
-{
-    «token»: «string»
-}
-```
-
-_Response sample (400):_
-
-```python
-{
-    «field_name»: [
-      «string»
-    ]
+"field_name": [
+"string"
+]
 }
 ```
