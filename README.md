@@ -30,7 +30,7 @@ Telegram: @dtankhaev
 "Grocery Assistant"
 The site is a database of culinary recipes. Users can create their own recipes, read recipes of other users, subscribe to interesting authors, add the best recipes to favorites, as well as create a shopping list and upload it in THT format. There is also a docker-compose file that allows you to quickly deploy a database container (PostgreSQL), a django + gunicorn project container and an nginx container.
 
-API documentation is available to [here](http://51.250.20.19//api/docs /)
+API documentation is available to [here](http://51.250.20.19//api/docs/)
 
 ## Preparation and launch of the project
 
